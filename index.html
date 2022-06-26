@@ -14,15 +14,8 @@
 
 let width = 1000, height = 600;
 
-let svg = d3.select("#choropleth_div")
-    .append("svg")
-    .attr("id", "choropleth_svg")
-    .attr("viewBox", "0 0 " + width + " " + height)
-// set background color
-svg.append("rect")
-    .attr("width", "100%")
-    .attr("height", "100%")
-    .attr("fill", "grey")
+
+
 //Tooltip html element
 const Tooltip = d3
     .select("#choropleth_div")
@@ -49,6 +42,15 @@ Promise.all([d3.json("sgmap.json"), d3.csv("population2021.csv",
 )
 ]).then(data => {
   console.log(populationMap)
+let svg = d3.select("#choropleth_div")
+    .append("svg")
+    .attr("id", "choropleth_svg")
+    .attr("viewBox", "0 0 " + width + " " + height)
+// set background color
+svg.append("rect")
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .attr("fill", "grey")
 // Map and projection
 var projection = d3.geoMercator()
     .center([103.851959, 1.290270])
@@ -57,15 +59,20 @@ let geopath = d3.geoPath().projection(projection);
 
 let mouseOver = function(event, d) {
   Tooltip
-      .html(d.properties.Name +"<br>"+"Population : " +populationMap.get(d.properties.Name) ).style("visibility", "visible")
+      .html(d.properties.Name +"<br>"+"Population : " +populationMap.get(d.properties.Name) ||0 ).style("visibility", "visible")
       // .style("left", event.pageX + 10 + "px");
     d3.select(this)
       .style("stroke", "black")
       .style("opacity", 1)
   }
+  let mouseMove = function (event,d) {
+    Tooltip
+          .style("top", event.pageY - 10 + "px")
+          .style("left", event.pageX + 10 + "px");
+          }
 
   let mouseLeave = function(event, d) {
-
+    Tooltip.html(``).style("visibility", "hidden")
       d3.select(this)
       .transition()
       .duration(200)
@@ -86,6 +93,7 @@ svg.append("g")
       )
 // some interaction
     .on("mouseover", mouseOver)
+    .on("mousemove",mouseMove)
     .on("mouseleave", mouseLeave) 
 var legendOrdinal = d3.legendColor()
   .shape("path", d3.symbol().type(d3.symbolTriangle).size(150)())
