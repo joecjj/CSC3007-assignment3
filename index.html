@@ -59,7 +59,7 @@ let geopath = d3.geoPath().projection(projection);
 
 let mouseOver = function(event, d) {
   Tooltip
-      .html(d.properties.Name +"<br>"+"Population : " +populationMap.get(d.properties.Name) ||0 ).style("visibility", "visible")
+      .html(d.properties.Name +"<br>"+"Population : " +(populationMap.get(d.properties.Name) ||0 )).style("visibility", "visible")
       // .style("left", event.pageX + 10 + "px");
     d3.select(this)
       .style("stroke", "black")
